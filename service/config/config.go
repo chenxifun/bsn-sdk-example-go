@@ -10,10 +10,13 @@ var (
 )
 
 func GetFabricConfig() *config.Config {
+	if fabricConf == nil {
+		InitFabricConfig()
+	}
 	return fabricConf
 }
 
-func InitConfig() error {
+func InitFabricConfig() error {
 	appConf := beego.AppConfig
 
 	api := appConf.String("bsn_Api")
