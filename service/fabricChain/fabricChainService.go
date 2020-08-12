@@ -61,6 +61,8 @@ func (f *fabricChainService) reqChainCode(funcName string, args []string) (*res.
 		return res.Body, nil
 	} else {
 		if res.Header.Code == -1 {
+			//信息不存在 是链码返回的异常信息，在这里处理，
+			//
 			if strings.Contains(res.Header.Msg, "信息不存在") {
 				return nil, errors.New("key is not found")
 			} else if strings.Contains(res.Header.Msg, "该键值信息已存在") {

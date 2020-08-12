@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>上链演示</title>
+
+    <!-- ZUI 标准版压缩后的 CSS 文件 -->
+    <link rel="stylesheet" href="/static/css/zui.min.css">
+    <!-- ZUI Javascript 依赖 jQuery -->
+    <script src="/static/js/jquery.js"></script>
+    <!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+    <script src="/static/js/zui.min.js"></script>
+    <style>
+        .ok {
+            color:green;
+        }
+        .err {
+            color: red;
+        }
+        .res {
+            height: 130px;
+            overflow-y: auto
+        }
+    </style>
+</head>
+
+<body>
+<div style="text-align: center;margin-top: 50px">
+    <h1>上链演示</h1>
+</div>
+<div class="container-fluid" style="margin-top: 50px">
+    <!-- float:left;margin-left: 5%; -->
+    <div id="fabric" class="panel col-5" style="margin: 50px auto">
+        <div class="panel-heading">
+            Fabric
+        </div>
+        <div class="panel-body">
+            <div>
+                <div class="input-group col-12">
+                    <span class="input-group-addon">Key:</span>
+                    <input id="fabricKey" type="text" class="form-control" placeholder="Key">
+                    <span class="input-group-addon">Value:</span>
+                    <input id="fabricValue" type="text" class="form-control" placeholder="Value">
+                    <span id="fabricSave" class=" bg-primary btn input-group-addon btn-primary">保存</span>
+                    <span id="fabricQuery" class=" bg-primary btn input-group-addon btn-primary">查询</span>
+                    <span id="fabricSync" class=" bg-primary btn input-group-addon btn-primary">同步</span>
+                </div>
+
+            </div>
+            <div id="fabricRes" class="panel-body res">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        var chains = [
+            "fabric",
+
+        ];
+        console.log(chains.length);
+        for (var i = 0; i < chains.length; i++) {
+            initChain(chains[i]);
+        }
+    });
+
+    function initChain(chain) {
+        var saveName = "#" + chain + "Save";
+        var queryName = "#" + chain + "Query";
+        var syncName = "#" + chain + "Sync";
+
+        $(saveName).click(function () {
+            var id = $(this).parents(".panel")[0].id;
+            console.log(id);
+
+            var keyName = "#" + id + "Key";
+            var valueName = "#" + id + "Value";
+            var res = "#" + id + "Res";
+
+            var data = new Object();
+            data.key = $(keyName).val().trim();
+            data.value = $(valueName).val().trim();
+
+            save(id, data, res);
+        });
+
+        $(queryName).click(function () {
+            var id = $(this).parents(".panel")[0].id;
+            console.log(id);
+            var keyName = "#" + id + "Key";
+            var res = "#" + id + "Res";
+
+            var data = new Object();
+            data.key = $(keyName).val().trim();
+            query(id, data, res);
+        });
+
+        $(syncName).click(function () {
+            var id = $(this).parents(".panel")[0].id;
+            console.log(id);
+            var keyName = "#" + id + "Key";
+            var res = "#" + id + "Res";
+
+            var data = new Object();
+            data.key = $(keyName).val().trim();
+            sync(id, data, res);
+        });
+    }
+
+    function save(fm, data, resdiv) {
+        var url = "/api/" + fm + "/set";
+        console.log(url);
+        $.ajax({
+            url: url,
+            data: JSON.stringify(data),
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/json",
+            beforeSend: function (e) {},
+            success: function (res) {
+                console.log(JSON.stringify(res));
+                if (res.code == 1) {
+                    var ok = $(
+                            "<div class='ok'>保存成功! TxId:<span></span></div>"
+                    ).appendTo(resdiv);
+                    $("span", ok).text(res.result.txId);
+                } else {
+                    var ok = $(
+                            "<div class='err'>保存失败! 失败信息:<span></span></div>"
+                    ).appendTo(resdiv);
+                    $("span", ok).text(res.msg);
+
+                }
+                scorl(resdiv)
+            },
+            complete: function (e) {},
+        });
+    }
+
+    function query(fm, data, resdiv) {
+        var url = "/api/" + fm + "/get";
+        $.ajax({
+            url: url,
+            data: JSON.stringify(data),
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/json",
+            beforeSend: function (e) {},
+            success: function (res) {
+                if (res.code == 1) {
+                    var ok = $(
+                            "<div class='ok'>查询成功! 查询结果:<span></span></div>"
+                    ).appendTo(resdiv);
+                    $("span", ok).text(res.result.value);
+                } else {
+                    var ok = $(
+                            "<div class='err'>查询失败! 失败信息:<span></span></div>"
+                    ).appendTo(resdiv);
+                    $("span", ok).text(res.msg);
+
+                }
+                scorl(resdiv)
+            },
+            complete: function (e) {},
+        });
+    }
+
+    function sync(fm, data, resdiv) {
+        var url = "/api/" + fm + "/sync";
+        $.ajax({
+            url: url,
+            data: JSON.stringify(data),
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/json",
+            beforeSend: function (e) {},
+            success: function (res) {
+                if (res.code == 1) {
+                    var ok = $(
+                            "<div class='ok'>同步成功! TxId:<span></span></div>"
+                    ).appendTo(resdiv);
+                    $("span", ok).text(res.result.txId);
+                } else {
+                    var ok = $(
+                            "<div class='err'>同步失败! 失败信息:<span></span></div>"
+                    ).appendTo(resdiv);
+                    $("span", ok).text(res.msg);
+                }
+
+                scorl(resdiv)
+            },
+            complete: function (e) {},
+        });
+    }
+
+    function scorl(resdiv) {
+        var divscll = $(resdiv)[0];
+        divscll.scrollTop = divscll.scrollHeight;
+    }
+</script>
+</body>
+
+</html>
