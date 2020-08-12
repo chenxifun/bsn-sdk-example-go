@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/chenxifun/bsn-sdk-example-go/models/service"
 	"github.com/chenxifun/bsn-sdk-example-go/service/config"
 	"github.com/chenxifun/bsn-sdk-example-go/service/fabricChain"
-	"time"
 )
 
 func NewChainService() (ChainService, error) {
@@ -21,13 +21,5 @@ type ChainService interface {
 	//读取链上数据
 	ChainGet(key string) (value string, err error)
 	//获取一个交易的详情
-	ChainTransInfo(txid string) (*TransInfo, error)
-}
-
-type TransInfo struct {
-	BlockHash   string
-	BlockNumber uint64
-
-	CreateName string
-	CreateTime time.Time
+	ChainTransInfo(txid string) (*service.TransInfo, error)
 }

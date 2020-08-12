@@ -1,12 +1,21 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/chenxifun/bsn-sdk-example-go/models"
 )
 
 type baseController struct {
 	beego.Controller
+}
+
+func (c *baseController) GetReqData(data interface{}) {
+	s := c.Ctx.Input.RequestBody
+	err := json.Unmarshal(s, data)
+	if err != nil {
+		c.ResultError(err)
+	}
 }
 
 func (c *baseController) ResultSuccess(data interface{}) {

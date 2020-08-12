@@ -11,6 +11,5 @@ func main() {
 	//	logger.Error("Config init failed")
 	//	return
 	//}
-	//注释
 	beego.Run()
 }

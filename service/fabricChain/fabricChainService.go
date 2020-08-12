@@ -3,6 +3,7 @@ package fabricChain
 import (
 	"encoding/base64"
 	"fmt"
+
 	"strings"
 	"time"
 
@@ -13,7 +14,7 @@ import (
 	"github.com/BSNDA/PCNGateway-Go-SDK/pkg/util/crypto"
 
 	"github.com/chenxifun/bsn-sdk-example-go/models/errors"
-	"github.com/chenxifun/bsn-sdk-example-go/service"
+	"github.com/chenxifun/bsn-sdk-example-go/models/service"
 )
 
 func NewFabricChainService(conf *config.Config, chainCode string) (*fabricChainService, error) {
